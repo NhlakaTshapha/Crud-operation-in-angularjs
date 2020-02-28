@@ -1,4 +1,22 @@
-﻿var app = angular.module('myapp', []);
+﻿var app = angular.module('myapp', ['ngRoute']);
+
+app.config(function ($routeProvider) {
+    $routeProvider.when('/', {
+        templateUrl: 'login.html',
+        controller: 'logincontroller'
+    }).when('/dashboard', {
+        templateUrl: 'dashboard.html',
+    }).when('/index', {
+        templateUrl: 'index.html',
+     controller: 'mycontroller'
+    }).when('/Main', {
+        templateUrl: 'Main.html',
+    }).otherwise({
+        redirectTo: '/'
+    });
+});
+
+//user controller operations 
 app.controller('mycontroller', function ($scope) {
     console.log("In mycontroller");
 
@@ -18,12 +36,18 @@ app.controller('mycontroller', function ($scope) {
     // this is a save button 
     $scope.saveUser = function () {
 
-      // adding a newuser to the list of users
-        $scope.users.push($scope.newuser);
-      // pass a successful message 
-        $scope.message = "New user added Successfully";
+        if ($scope.newuser.username != null && $scope.newuser.email != null && $scope.newuser.fullname != null) {
+            // adding a newuser to the list of users
+            $scope.users.push($scope.newuser);
+            // pass a successful message 
+            $scope.message = "New user added Successfully";
 
-        $scope.newuser = {};
+            $scope.newuser = {};
+        }
+        else {
+            alert('please fill in required fields');
+        }
+      
     }
 
 
@@ -51,3 +75,28 @@ app.controller('mycontroller', function ($scope) {
         $scope.message = "";
     }
 });
+
+//Login controller operations
+app.controller('logincontroller', function ($scope, $location) {
+    console.log("function login");
+
+    //login function     when a user press login button this function will be called
+    $scope.login = function () {
+        var username = $scope.username;
+        var password = $scope.password;
+
+        //if your login details are as follows password = Nhlaka02 and password =123 redirect to the index page else to main page 
+        if ($scope.username == 'Nhlaka02' && $scope.password == '123') {
+            console.log("login-index");
+            $location.path('index');
+        }
+        else if ($scope.username == 'Admin' && $scope.password == '1234') {
+            console.log('login-dashboard');
+            $location.path('Main');
+        }
+        else {
+            alert("Please proide correct login details");
+            $location.path('dashboard');
+        }
+    }
+})
